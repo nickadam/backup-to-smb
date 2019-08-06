@@ -1,0 +1,5 @@
+version: '3.5'
+services:
+  daemon:
+    image: nickadam/backup-to-smb:1.0
+    build: .
