@@ -1,7 +1,5 @@
 #!/bin/sh
 
-date >> /tmp/test.txt
-
 # get share from SMB_SHARE
 get_share () {
   n=0
@@ -74,7 +72,7 @@ check_dir_exists () {
 
 mkdir () {
   dir="$1"
-  smbclient -A /authfile $SHARE -m SMB3 -c "mkdir $dir" &>/dev/null
+  smbclient -A /authfile $SHARE -m SMB3 -c "mkdir \"$dir\"" &>/dev/null
 }
 
 make_subdirs () {
@@ -91,12 +89,42 @@ make_subdirs () {
     #check_dir_exists $path
     if ! check_dir_exists $path
     then
-      mkdir $path
+      mkdir "$path"
     fi
     n=$(($n + 1))
   done
 }
 
+# get list of existing backup directories
+get_backups () {
+  path=$(get_path)
+  if [ ! -z $path ]
+  then
+    path="cd $path;"
+  fi
+  smbclient -A /authfile $SHARE -m SMB3 -c "$path dir" | \
+  egrep -o "$BACKUP_NAME""_[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\.[0-9]{2}-\S+" | \
+  sort -n
+}
+
+count_backups () {
+  IFS=$'\n'
+  n=0
+  for backup in $(get_backups)
+  do
+    n=$(($n + 1))
+  done
+  echo $n
+}
+
+make_backup () {
+  make_subdirs
+  backup_date=$(date "+%Y-%m-%d_%H.%M-%Z")
+  path="$(get_path)""/$BACKUP_NAME""_$backup_date"
+  mkdir "$path"
+  smbclient -A /authfile $SHARE -m SMB3 -c "prompt OFF; recurse ON; mask \"\"; cd \"$path\"; lcd /data; mput *"
+}
+
 SHARE=$(get_share)
 
-make_subdirs
+make_backup
