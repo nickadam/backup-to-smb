@@ -97,10 +97,10 @@ make_subdirs () {
 
 # get list of existing backup directories
 get_backups () {
-  path=$(get_path)
+  path="$(get_path)"
   if [ ! -z $path ]
   then
-    path="cd $path;"
+    path="cd \"$path\";"
   fi
   smbclient -A /authfile $SHARE -m SMB3 -c "$path dir" | \
   egrep -o "$BACKUP_NAME""_[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\.[0-9]{2}-\S+" | \
@@ -122,7 +122,34 @@ make_backup () {
   backup_date=$(date "+%Y-%m-%d_%H.%M-%Z")
   path="$(get_path)""/$BACKUP_NAME""_$backup_date"
   mkdir "$path"
-  smbclient -A /authfile $SHARE -m SMB3 -c "prompt OFF; recurse ON; mask \"\"; cd \"$path\"; lcd /data; mput *"
+  if ! smbclient -A /authfile $SHARE -m SMB3 -c "prompt OFF; recurse ON; mask \"\"; cd \"$path\"; lcd /data; mput *" &>/dev/null
+  then
+    echo "$path Backup failed"
+  fi
+  delete_backups
+}
+
+delete_backups () {
+  c=$(count_backups)
+  path="$(get_path)"
+  if [ ! -z $path ]
+  then
+    path="cd \"$path\";"
+  fi
+  if [ "$c" -gt "$RETENTION" ]
+  then
+    delete=$(($c - $RETENTION))
+    IFS=$'\n'
+    for backup in $(get_backups)
+    do
+      if [ $delete -gt 0 ]
+      then
+        echo delete $path $backup
+        smbclient -A /authfile $SHARE -m SMB3 -c "$path deltree \"$backup\"" &>/dev/null
+        delete=$(($delete - 1))
+      fi
+    done
+  fi
 }
 
 SHARE=$(get_share)
