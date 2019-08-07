@@ -1,7 +1,5 @@
 FROM alpine:3.10
 
-ENV CRON_SCHEDULE * * * * *
-
 RUN apk add samba-client dumb-init
 
 COPY docker-entrypoint.sh /
