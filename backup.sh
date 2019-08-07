@@ -117,7 +117,7 @@ count_backups () {
   echo $n
 }
 
-make_backup () {
+backup_and_delete () {
   make_subdirs
   backup_date=$(date "+%Y-%m-%d_%H.%M-%Z")
   path="$(get_path)""/$BACKUP_NAME""_$backup_date"
@@ -153,4 +153,4 @@ delete_backups () {
 
 SHARE=$(get_share)
 
-make_backup
+backup_and_delete
