@@ -7,6 +7,7 @@ services:
       CRON_SCHEDULE: '* * * * *'
       BACKUP_NAME: some application
       RETENTION: 1
+      TARGZ: 0
       SMB_SHARE: //server/share/folder
       SMB_DOMAIN: WORKGROUP
       SMB_USER: smbusername

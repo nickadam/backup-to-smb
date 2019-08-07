@@ -122,9 +122,19 @@ backup_and_delete () {
   backup_date=$(date "+%Y-%m-%d_%H.%M-%Z")
   path="$(get_path)""/$BACKUP_NAME""_$backup_date"
   mkdir "$path"
-  if ! smbclient -A /authfile $SHARE -m SMB3 -c "prompt OFF; recurse ON; mask \"\"; cd \"$path\"; lcd /data; mput *" &>/dev/null
+  if [ $TARGZ -eq 1 ]
   then
-    echo "$path Backup failed"
+    tar -czf "/tmp/data.tar.gz" /data 2>/dev/null
+    if ! smbclient -A /authfile $SHARE -m SMB3 -c "prompt OFF; recurse ON; mask \"\"; cd \"$path\"; lcd /tmp; put data.tar.gz" &>/dev/null
+    then
+      echo "$path Backup failed"
+    fi
+    rm "/tmp/data.tar.gz"
+  else
+    if ! smbclient -A /authfile $SHARE -m SMB3 -c "prompt OFF; recurse ON; mask \"\"; cd \"$path\"; lcd /data; mput *" &>/dev/null
+    then
+      echo "$path Backup failed"
+    fi
   fi
   delete_backups
 }

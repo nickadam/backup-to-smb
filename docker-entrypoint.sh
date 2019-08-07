@@ -9,6 +9,7 @@ fi
 if [ -z "$CRON_SCHEDULE" ] ||
   [ -z "$BACKUP_NAME" ] ||
   [ -z "$RETENTION" ] ||
+  [ -z "$TARGZ" ] ||
   [ -z "$SMB_SHARE" ] ||
   [ -z "$SMB_DOMAIN" ] ||
   [ -z "$SMB_USER" ] ||
