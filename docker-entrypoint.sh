@@ -10,12 +10,17 @@ if [ -z "$CRON_SCHEDULE" ] ||
   [ -z "$BACKUP_NAME" ] ||
   [ -z "$RETENTION" ] ||
   [ -z "$SMB_SHARE" ] ||
+  [ -z "$SMB_DOMAIN" ] ||
   [ -z "$SMB_USER" ] ||
   [ -z "$SMB_PASS" ]
 then
   echo "Environment variables must be set"
   exit 1
 fi
+
+echo "username = $SMB_USER" > /authfile
+echo "password = $SMB_PASS" >> /authfile
+echo "domain = $SMB_DOMAIN" >> /authfile
 
 crond
 

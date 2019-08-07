@@ -8,6 +8,7 @@ services:
       BACKUP_NAME: some application
       RETENTION: 1
       SMB_SHARE: //server/share/folder
+      SMB_DOMAIN: WORKGROUP
       SMB_USER: smbusername
       #SMB_PASS: smbpassword
       SMB_PASS_FILE: /run/secrets/smbpassword
