@@ -4,7 +4,7 @@ services:
     image: nickadam/backup-to-smb:1.0
     build: .
     environment:
-      CRON_SCHEDULE: '* * * * *'
+      CRON_SCHEDULE: '0 4 * * *'
       BACKUP_NAME: some application
       RETENTION: 1
       TARGZ: 0
