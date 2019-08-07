@@ -7,12 +7,18 @@ services:
       CRON_SCHEDULE: '* * * * *'
       BACKUP_NAME: some application
       RETENTION: 1
-      SMB_SHARE: \\server\share\folder
+      SMB_SHARE: //server/share/folder
       SMB_USER: smbusername
       #SMB_PASS: smbpassword
       SMB_PASS_FILE: /run/secrets/smbpassword
     secrets:
       - smbpassword
+    volumes:
+      - type: volume
+        source: data
+        target: /data
+volumes:
+  data:
 secrets:
   smbpassword:
     external: true
