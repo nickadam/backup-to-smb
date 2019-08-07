@@ -144,7 +144,6 @@ delete_backups () {
     do
       if [ $delete -gt 0 ]
       then
-        echo delete $path $backup
         smbclient -A /authfile $SHARE -m SMB3 -c "$path deltree \"$backup\"" &>/dev/null
         delete=$(($delete - 1))
       fi
